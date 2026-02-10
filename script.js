@@ -311,6 +311,7 @@ function generateLetter(playerName, gameName, result) {
     const { celestialBody, actualDistance, waitTime } = result;
     
     const templates = [
+        // 原有的3个模板
         `亲爱的${playerName}，
 
 我们荣幸地得知您已到达了【${celestialBody.name}】，这是距离地球${actualDistance}的天体。
@@ -349,6 +350,101 @@ ${new Date().toLocaleDateString()}`,
 期待您的回复（预计${formatTime(waitTime)}后收到）。
 
 地球游戏总部
+${new Date().toLocaleDateString()}`,
+
+        // 新增的5个模板
+        `${playerName}船长，
+
+🚀 紧急通讯 🚀
+
+我们的深空雷达显示，您的飞船已成功到达【${celestialBody.name}】，${celestialBody.description}。
+
+作为银河系游戏联盟的注册成员，您有义务参与【${gameName}】的星际锦标赛。
+
+然而，由于您目前距离地球${actualDistance}，我们担心您的游戏手柄信号需要${formatTime(waitTime)}才能传回地球。
+
+建议立即激活超光速通信模块，或考虑使用虫洞快速返回。
+
+星际游戏联盟总部
+舰队司令部
+${new Date().toLocaleDateString()}`,
+
+        `致：宇宙探险家${playerName}
+
+📡 来自地球的呼叫 📡
+
+恭喜您！您已成为第一个到达【${celestialBody.name}】的人类！NASA、SpaceX和各大游戏公司都为您感到骄傲。
+
+但是...我们这里有个小问题。
+
+您的【${gameName}】队友们已经在地球上等了${formatTime(waitTime)}，他们开始怀疑您是不是被外星人绑架了。
+
+由于您目前的位置距离地球${actualDistance}，我们建议您：
+1. 立即发射信号弹
+2. 启动紧急返回程序
+3. 或者教会当地外星人玩【${gameName}】
+
+地球游戏救援队
+${new Date().toLocaleDateString()}`,
+
+        `【银河系失踪人员通报】
+
+失踪者：${playerName}
+最后位置：【${celestialBody.name}】（${actualDistance}）
+失踪时长：${formatTime(waitTime)}
+原定活动：【${gameName}】游戏聚会
+
+各位星际公民，如果您在【${celestialBody.name}】附近发现一个拿着游戏手柄、一脸茫然的地球人，请立即联系我们。
+
+该人员可能出现以下症状：
+- 不停询问WiFi密码
+- 试图用手机导航回地球
+- 抱怨当地没有外卖服务
+
+请注意：由于距离原因，救援信号需要${formatTime(waitTime)}才能到达。
+
+银河系搜救中心
+${new Date().toLocaleDateString()}`,
+
+        `亲爱的${playerName}，
+
+我是您的AI助手小爱，经过精确计算，我发现了一个令人震惊的事实：
+
+您现在的位置是【${celestialBody.name}】，这里${celestialBody.description}，距离地球${actualDistance}。
+
+虽然这个发现足以让您获得诺贝尔物理学奖，但更重要的是——您的【${gameName}】游戏已经开始${formatTime(waitTime)}了！
+
+作为您的贴心助手，我已经为您准备了以下解决方案：
+🔸 方案A：立即启动时空跳跃装置
+🔸 方案B：请求外星文明提供传送门服务
+🔸 方案C：发明超光速网络连接技术
+
+温馨提示：由于物理定律限制，您的操作指令将有${formatTime(waitTime)}的延迟。
+
+您的专属AI助手
+小爱同学
+${new Date().toLocaleDateString()}`,
+
+        `【宇宙邮政特快专递】
+
+收件人：${playerName}
+地址：【${celestialBody.name}】星域
+邮编：距离地球${actualDistance}
+
+📮 您有一份来自地球的紧急邮件 📮
+
+发件人：【${gameName}】游戏俱乐部全体成员
+
+邮件内容：
+"喂！${playerName}！你跑哪去了？！游戏都开始${formatTime(waitTime)}了！
+
+我们知道【${celestialBody.name}】很美，${celestialBody.description}，风景一定很棒。但是你能不能先回来把游戏打完再去旅游啊？
+
+PS：如果你在那边遇到了外星人，记得问问他们会不会玩【${gameName}】，说不定可以组个跨星系战队。
+
+PPS：由于宇宙邮政的限制，这封邮件经过了${formatTime(waitTime)}才送到你手上，希望你收到时还记得我们是谁。"
+
+宇宙邮政总局
 ${new Date().toLocaleDateString()}`
     ];
     
@@ -744,7 +840,8 @@ function generatePostcard() {
     }
     
     const celestialBody = currentResult.celestialBody;
-    const letterContent = generateLetter(currentResult.playerName, currentResult.gameName, currentResult);
+    // 使用当前显示的信件内容，而不是重新生成
+    const letterContent = document.getElementById('letterContent').textContent;
     
     // 创建明信片HTML内容
     const postcardHTML = `
