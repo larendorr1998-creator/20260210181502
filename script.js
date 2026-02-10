@@ -1,6 +1,72 @@
 // 光速常量 (米/秒)
 const SPEED_OF_LIGHT = 299792458;
 
+// 页面加载时检查URL参数
+document.addEventListener('DOMContentLoaded', function() {
+    // 检查是否是明信片模式
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('postcard')) {
+        showPostcardMode(urlParams);
+        return;
+    }
+    
+    // 正常模式的初始化
+    initNormalMode();
+});
+
+// 明信片模式显示
+function showPostcardMode(urlParams) {
+    try {
+        // 从URL参数解析数据
+        const playerName = decodeURIComponent(urlParams.get('name') || '神秘旅行者');
+        const gameName = decodeURIComponent(urlParams.get('game') || '游戏');
+        const waitTime = parseInt(urlParams.get('time') || '0');
+        const celestialIndex = parseInt(urlParams.get('celestial') || '0');
+        const letterTemplate = parseInt(urlParams.get('template') || '0');
+        
+        // 获取天体信息
+        const celestialBody = CELESTIAL_BODIES[celestialIndex] || CELESTIAL_BODIES[0];
+        
+        // 构造结果对象
+        const result = {
+            waitTime: waitTime,
+            lightSeconds: waitTime,
+            celestialBody: celestialBody,
+            actualDistance: formatDistance(waitTime),
+            playerName: playerName,
+            gameName: gameName
+        };
+        
+        // 生成指定模板的信件
+        const letter = generateSpecificLetter(playerName, gameName, result, letterTemplate);
+        
+        // 显示明信片页面
+        document.body.innerHTML = createPostcardPageHTML(result, letter);
+        
+    } catch (error) {
+        console.error('明信片模式加载失败:', error);
+        // 降级到正常模式
+        initNormalMode();
+    }
+}
+
+// 正常模式初始化
+function initNormalMode() {
+    // 为输入框添加回车键监听
+    const inputs = document.querySelectorAll('input');
+    inputs.forEach(input => {
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculateAndGenerate();
+            }
+        });
+    });
+    
+    // 添加一些示例提示
+    document.getElementById('playerName').placeholder = '例如：小明、张三、游戏大神';
+    document.getElementById('gameName').placeholder = '例如：王者荣耀、英雄联盟、原神';
+}
+
 // 天体数据库 - 包含数千个天体及其距离（以光秒为单位）
 const CELESTIAL_BODIES = [
     // ==================== 地月系统 ====================
@@ -452,7 +518,435 @@ ${new Date().toLocaleDateString()}`
     return templates[Math.floor(Math.random() * templates.length)];
 }
 
-// 主要计算和生成函数
+// 生成指定模板的信件
+function generateSpecificLetter(playerName, gameName, result, templateIndex) {
+    const { celestialBody, actualDistance, waitTime } = result;
+    
+    const templates = [
+        // 原有的3个模板
+        `亲爱的${playerName}，
+
+我们荣幸地得知您已到达了【${celestialBody.name}】，这是距离地球${actualDistance}的天体。
+
+为庆祝这一时刻，我们邀请您打一场【${gameName}】游戏。
+
+不幸的是，您可能需要设法克服长达${formatTime(waitTime)}的网络延迟。
+
+我们建议您考虑使用量子通信技术，或者干脆搭乘下一班光速飞船回来。
+
+此致
+游戏等待委员会
+${new Date().toLocaleDateString()}`,
+
+        `尊敬的星际旅行者${playerName}，
+
+根据我们的精确计算，您目前的位置应该在【${celestialBody.name}】附近，距离地球约${actualDistance}。
+
+虽然我们很佩服您的探索精神，但【${gameName}】游戏已经等待您${formatTime(waitTime)}了。
+
+请注意，从您当前位置发送的任何消息都将经历${formatTime(waitTime)}的传输延迟。
+
+建议您立即启动返航程序，或者至少发个信号告诉我们您还活着。
+
+宇宙游戏协调中心
+${new Date().toLocaleDateString()}`,
+
+        `${playerName}同志，
+
+经过精密的天体物理学计算，我们确定您已经成功抵达【${celestialBody.name}】，该天体距离地球${actualDistance}。
+
+虽然这是人类太空探索的一大步，但这也意味着您错过【${gameName}】游戏已经${formatTime(waitTime)}了。
+
+考虑到光速限制，我们理解您的通信延迟问题。但是，我们仍然希望您能想办法参与游戏，哪怕是通过量子纠缠的方式。
+
+期待您的回复（预计${formatTime(waitTime)}后收到）。
+
+地球游戏总部
+${new Date().toLocaleDateString()}`,
+
+        // 新增的5个模板
+        `${playerName}船长，
+
+🚀 紧急通讯 🚀
+
+我们的深空雷达显示，您的飞船已成功到达【${celestialBody.name}】，${celestialBody.description}。
+
+作为银河系游戏联盟的注册成员，您有义务参与【${gameName}】的星际锦标赛。
+
+然而，由于您目前距离地球${actualDistance}，我们担心您的游戏手柄信号需要${formatTime(waitTime)}才能传回地球。
+
+建议立即激活超光速通信模块，或考虑使用虫洞快速返回。
+
+星际游戏联盟总部
+舰队司令部
+${new Date().toLocaleDateString()}`,
+
+        `致：宇宙探险家${playerName}
+
+📡 来自地球的呼叫 📡
+
+恭喜您！您已成为第一个到达【${celestialBody.name}】的人类！NASA、SpaceX和各大游戏公司都为您感到骄傲。
+
+但是...我们这里有个小问题。
+
+您的【${gameName}】队友们已经在地球上等了${formatTime(waitTime)}，他们开始怀疑您是不是被外星人绑架了。
+
+由于您目前的位置距离地球${actualDistance}，我们建议您：
+1. 立即发射信号弹
+2. 启动紧急返回程序
+3. 或者教会当地外星人玩【${gameName}】
+
+地球游戏救援队
+${new Date().toLocaleDateString()}`,
+
+        `【银河系失踪人员通报】
+
+失踪者：${playerName}
+最后位置：【${celestialBody.name}】（${actualDistance}）
+失踪时长：${formatTime(waitTime)}
+原定活动：【${gameName}】游戏聚会
+
+各位星际公民，如果您在【${celestialBody.name}】附近发现一个拿着游戏手柄、一脸茫然的地球人，请立即联系我们。
+
+该人员可能出现以下症状：
+- 不停询问WiFi密码
+- 试图用手机导航回地球
+- 抱怨当地没有外卖服务
+
+请注意：由于距离原因，救援信号需要${formatTime(waitTime)}才能到达。
+
+银河系搜救中心
+${new Date().toLocaleDateString()}`,
+
+        `亲爱的${playerName}，
+
+我是您的AI助手小爱，经过精确计算，我发现了一个令人震惊的事实：
+
+您现在的位置是【${celestialBody.name}】，这里${celestialBody.description}，距离地球${actualDistance}。
+
+虽然这个发现足以让您获得诺贝尔物理学奖，但更重要的是——您的【${gameName}】游戏已经开始${formatTime(waitTime)}了！
+
+作为您的贴心助手，我已经为您准备了以下解决方案：
+🔸 方案A：立即启动时空跳跃装置
+🔸 方案B：请求外星文明提供传送门服务
+🔸 方案C：发明超光速网络连接技术
+
+温馨提示：由于物理定律限制，您的操作指令将有${formatTime(waitTime)}的延迟。
+
+您的专属AI助手
+小爱同学
+${new Date().toLocaleDateString()}`,
+
+        `【宇宙邮政特快专递】
+
+收件人：${playerName}
+地址：【${celestialBody.name}】星域
+邮编：距离地球${actualDistance}
+
+📮 您有一份来自地球的紧急邮件 📮
+
+发件人：【${gameName}】游戏俱乐部全体成员
+
+邮件内容：
+"喂！${playerName}！你跑哪去了？！游戏都开始${formatTime(waitTime)}了！
+
+我们知道【${celestialBody.name}】很美，${celestialBody.description}，风景一定很棒。但是你能不能先回来把游戏打完再去旅游啊？
+
+PS：如果你在那边遇到了外星人，记得问问他们会不会玩【${gameName}】，说不定可以组个跨星系战队。
+
+PPS：由于宇宙邮政的限制，这封邮件经过了${formatTime(waitTime)}才送到你手上，希望你收到时还记得我们是谁。"
+
+宇宙邮政总局
+${new Date().toLocaleDateString()}`
+    ];
+    
+    // 使用指定的模板，如果索引无效则使用第一个
+    const validIndex = templateIndex >= 0 && templateIndex < templates.length ? templateIndex : 0;
+    return templates[validIndex];
+}
+
+// 创建明信片页面HTML
+function createPostcardPageHTML(result, letterContent) {
+    const celestialBody = result.celestialBody;
+    const baseURL = window.location.origin + window.location.pathname;
+    
+    return `
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .postcard-container {
+            width: 100%;
+            max-width: 800px;
+            background: linear-gradient(135deg, #000033 0%, #000066 50%, #000000 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+            min-height: 900px;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        
+        .stars-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(2px 2px at 20px 30px, white, transparent),
+                radial-gradient(2px 2px at 40px 70px, white, transparent),
+                radial-gradient(1px 1px at 90px 40px, white, transparent),
+                radial-gradient(1px 1px at 130px 80px, white, transparent),
+                radial-gradient(2px 2px at 160px 30px, white, transparent),
+                radial-gradient(1px 1px at 200px 90px, white, transparent),
+                radial-gradient(2px 2px at 240px 50px, white, transparent),
+                radial-gradient(1px 1px at 280px 10px, white, transparent),
+                radial-gradient(1px 1px at 320px 70px, white, transparent),
+                radial-gradient(2px 2px at 360px 40px, white, transparent);
+            background-repeat: repeat;
+            background-size: 400px 200px;
+            opacity: 0.8;
+        }
+        
+        .header {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 30px;
+            text-align: center;
+            border-bottom: 3px solid #FFD700;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .header h1 {
+            color: #FFD700;
+            font-size: 2.5em;
+            margin: 0 0 10px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .header p {
+            color: white;
+            font-size: 1.1em;
+            margin: 0;
+            opacity: 0.9;
+        }
+        
+        .celestial-section {
+            background: rgba(0, 0, 0, 0.6);
+            margin: 20px;
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #87CEEB;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .celestial-info {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .celestial-info h2 {
+            color: #FFD700;
+            font-size: 1.8em;
+            margin: 0 0 15px 0;
+        }
+        
+        .celestial-info p {
+            color: white;
+            font-size: 1.1em;
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+        
+        .celestial-stats {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        
+        .celestial-stats p {
+            margin: 5px 0;
+            color: #87CEEB;
+        }
+        
+        .celestial-visual {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .celestial-body {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: ${celestialBody.color};
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            box-shadow: 0 0 30px ${celestialBody.color}50;
+            animation: pulse 2s infinite;
+        }
+        
+        .spaceship {
+            font-size: 2em;
+            color: #C0C0C0;
+        }
+        
+        .letter-section {
+            background: rgba(255, 255, 255, 0.95);
+            margin: 20px;
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #667eea;
+            position: relative;
+            z-index: 2;
+            color: #333;
+        }
+        
+        .letter-section h3 {
+            color: #667eea;
+            font-size: 1.5em;
+            margin: 0 0 20px 0;
+            text-align: center;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .letter-content {
+            font-size: 1.1em;
+            line-height: 1.8;
+            white-space: pre-line;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .action-section {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .generate-btn {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+            transition: all 0.3s;
+            border: 2px solid white;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(40, 167, 69, 0.4);
+        }
+        
+        .action-section p {
+            color: #C0C0C0;
+            font-size: 0.9em;
+            margin-top: 15px;
+            opacity: 0.8;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        @media (max-width: 600px) {
+            .celestial-section {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .celestial-info {
+                min-width: auto;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+    
+    <div class="postcard-container">
+        <div class="stars-bg"></div>
+        
+        <div class="header">
+            <h1>🕊️ 鸽子提醒明信片</h1>
+            <p>基于光速计算的天体距离匹配系统</p>
+        </div>
+        
+        <div class="celestial-section">
+            <div class="celestial-info">
+                <h2>🌟 目标天体: ${celestialBody.name}</h2>
+                <p>${celestialBody.description}</p>
+                <div class="celestial-stats">
+                    <p><strong>距离地球:</strong> ${result.actualDistance}</p>
+                    <p><strong>等待时间:</strong> ${formatTime(result.waitTime)}</p>
+                    <p><strong>网络延迟:</strong> ${formatTime(result.waitTime)}</p>
+                </div>
+            </div>
+            <div class="celestial-visual">
+                <div class="celestial-body">${getCelestialEmoji(celestialBody.type)}</div>
+                <div class="spaceship">🚀</div>
+            </div>
+        </div>
+        
+        <div class="letter-section">
+            <h3>📧 官方提醒信件</h3>
+            <div class="letter-content">${letterContent}</div>
+        </div>
+        
+        <div class="action-section">
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; margin-bottom: 15px;">
+                <a href="${baseURL}" class="generate-btn">
+                    🚀 生成我的明信片
+                </a>
+                <button onclick="shareCurrentPostcard()" class="generate-btn" style="background: linear-gradient(45deg, #17a2b8, #20c997);">
+                    📤 分享这张明信片
+                </button>
+            </div>
+            <p>点击按钮开始制作您专属的天体提醒明信片，或分享这张明信片给朋友</p>
+        </div>
+    </div>
+    `;
+}
+
+// 主要计算和生成函数 - 直接生成明信片
 function calculateAndGenerate() {
     const playerName = document.getElementById('playerName').value.trim();
     const gameName = document.getElementById('gameName').value.trim();
@@ -491,76 +985,57 @@ function calculateAndGenerate() {
         gameName
     };
     
-    // 显示天体信息
-    const celestialInfo = document.getElementById('celestialInfo');
-    celestialInfo.innerHTML = `
-        <h3>🌟 ${result.celestialBody.name}</h3>
-        <p>${result.celestialBody.description}</p>
-        <p><strong>距离地球：</strong>${result.actualDistance}</p>
-        <p><strong>等待时间：</strong>${formatTime(result.waitTime)}</p>
-    `;
-    
-    // 生成并显示信件
-    const letter = generateLetter(playerName, gameName, result);
-    document.getElementById('letterContent').textContent = letter;
-    
-    // 显示结果区域
-    document.getElementById('resultSection').style.display = 'block';
-    
-    // 滚动到结果区域
-    document.getElementById('resultSection').scrollIntoView({ 
-        behavior: 'smooth' 
-    });
+    // 直接生成明信片URL并跳转
+    generateAndShowPostcard();
 }
 
-// 复制信件到剪贴板
-async function copyLetter() {
-    const letterContent = document.getElementById('letterContent').textContent;
+// 直接生成并显示明信片
+function generateAndShowPostcard() {
+    if (!currentResult) {
+        alert('计算结果不存在！');
+        return;
+    }
     
     try {
-        await navigator.clipboard.writeText(letterContent);
+        // 随机选择一个模板
+        const templateIndex = Math.floor(Math.random() * 8);
         
-        // 临时改变按钮文本以显示成功
-        const copyBtn = document.querySelector('.copy-btn');
-        const originalText = copyBtn.textContent;
-        copyBtn.textContent = '✅ 已复制！';
-        copyBtn.style.background = '#28a745';
+        // 找到天体在数组中的索引
+        const celestialIndex = CELESTIAL_BODIES.findIndex(body => 
+            body.name === currentResult.celestialBody.name && 
+            body.distance === currentResult.celestialBody.distance
+        );
         
-        setTimeout(() => {
-            copyBtn.textContent = originalText;
-            copyBtn.style.background = '#28a745';
-        }, 2000);
+        // 构建明信片URL
+        const baseURL = window.location.origin + window.location.pathname;
+        const postcardURL = `${baseURL}?postcard=1&name=${encodeURIComponent(currentResult.playerName)}&game=${encodeURIComponent(currentResult.gameName)}&time=${currentResult.waitTime}&celestial=${celestialIndex}&template=${templateIndex}`;
+        
+        // 直接跳转到明信片页面
+        window.location.href = postcardURL;
         
     } catch (err) {
-        // 降级方案：选择文本
-        const letterElement = document.getElementById('letterContent');
-        const range = document.createRange();
-        range.selectNode(letterElement);
-        window.getSelection().removeAllRanges();
-        window.getSelection().addRange(range);
-        
-        alert('请手动复制选中的文本');
+        console.error('生成明信片失败:', err);
+        alert('生成明信片失败，请重试。');
     }
 }
 
-// 分享功能
-function shareLetter() {
-    const letterContent = document.getElementById('letterContent').textContent;
-    const playerName = document.getElementById('playerName').value;
-    const title = `给${playerName}的天体提醒信`;
-    
-    if (navigator.share) {
-        // 使用原生分享API
-        navigator.share({
-            title: title,
-            text: letterContent
-        }).catch(err => {
-            console.log('分享取消或失败:', err);
-        });
-    } else {
-        // 降级方案：复制到剪贴板
-        copyLetter();
-        alert('内容已复制到剪贴板，您可以粘贴到任何地方分享！');
+// 在明信片页面中添加分享功能
+function shareCurrentPostcard() {
+    try {
+        const shareData = {
+            title: document.title,
+            text: '快来看看这张有趣的天体提醒明信片！',
+            url: window.location.href
+        };
+        
+        if (navigator.share) {
+            navigator.share(shareData);
+        } else {
+            navigator.clipboard.writeText(window.location.href);
+            alert('明信片链接已复制到剪贴板！');
+        }
+    } catch (err) {
+        prompt('请复制下面的链接进行分享：', window.location.href);
     }
 }
 
@@ -1179,7 +1654,7 @@ function downloadPostcardHTML() {
     URL.revokeObjectURL(link.href);
 }
 
-// 分享明信片链接
+// 分享明信片链接 - 生成真正的明信片URL
 async function sharePostcardURL() {
     if (!currentResult) {
         alert('请先生成明信片！');
@@ -1187,28 +1662,60 @@ async function sharePostcardURL() {
     }
     
     try {
-        // 创建分享数据
-        const shareData = {
-            title: `${currentResult.playerName}的天体提醒明信片`,
-            text: `${currentResult.playerName}已经到达${currentResult.celestialBody.name}了！快来看看这张有趣的明信片，并生成你自己的吧！`,
-            url: window.location.href
-        };
+        // 获取当前使用的模板索引
+        const currentLetter = document.getElementById('letterContent').textContent;
+        let templateIndex = 0;
         
-        if (navigator.share) {
-            // 使用原生分享API
-            await navigator.share(shareData);
-        } else {
-            // 降级方案：复制链接
-            await navigator.clipboard.writeText(window.location.href);
-            alert('链接已复制到剪贴板！\n\n您可以将链接分享给朋友，他们点击明信片上的按钮就能生成自己的明信片了。');
+        // 尝试匹配当前信件内容来确定模板索引
+        for (let i = 0; i < 8; i++) {
+            const testLetter = generateSpecificLetter(currentResult.playerName, currentResult.gameName, currentResult, i);
+            if (testLetter === currentLetter) {
+                templateIndex = i;
+                break;
+            }
         }
+        
+        // 找到天体在数组中的索引
+        const celestialIndex = CELESTIAL_BODIES.findIndex(body => 
+            body.name === currentResult.celestialBody.name && 
+            body.distance === currentResult.celestialBody.distance
+        );
+        
+        // 构建明信片URL
+        const baseURL = window.location.origin + window.location.pathname;
+        const postcardURL = `${baseURL}?postcard=1&name=${encodeURIComponent(currentResult.playerName)}&game=${encodeURIComponent(currentResult.gameName)}&time=${currentResult.waitTime}&celestial=${celestialIndex}&template=${templateIndex}`;
+        
+        // 打开明信片页面
+        window.open(postcardURL, '_blank');
+        
+        // 尝试分享链接
+        setTimeout(async () => {
+            try {
+                const shareData = {
+                    title: `${currentResult.playerName}的天体提醒明信片`,
+                    text: `${currentResult.playerName}已经到达${currentResult.celestialBody.name}了！快来看看这张有趣的明信片吧！`,
+                    url: postcardURL
+                };
+                
+                if (navigator.share) {
+                    await navigator.share(shareData);
+                } else {
+                    await navigator.clipboard.writeText(postcardURL);
+                    alert('明信片链接已复制到剪贴板！\n\n您可以将这个链接分享给朋友，他们打开后就能看到完整的明信片，并可以生成自己的明信片。');
+                }
+            } catch (err) {
+                console.error('分享失败:', err);
+                prompt('请复制下面的明信片链接进行分享：', postcardURL);
+            }
+        }, 500);
+        
     } catch (err) {
-        console.error('分享失败:', err);
-        // 最终降级方案
-        const url = window.location.href;
-        prompt('请复制下面的链接进行分享：', url);
+        console.error('生成明信片链接失败:', err);
+        alert('生成明信片链接失败，请重试。');
     }
 }
+
+// 创建独立的明信片页面HTML - 已删除，使用URL参数方式
 
 // 重新生成功能 - 返回初始状态
 function resetApp() {
@@ -1233,19 +1740,27 @@ function resetApp() {
     document.getElementById('playerName').focus();
 }
 
-// 为明信片添加点击事件监听
-document.addEventListener('DOMContentLoaded', function() {
-    // 为输入框添加回车键监听
-    const inputs = document.querySelectorAll('input');
-    inputs.forEach(input => {
-        input.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                calculateAndGenerate();
-            }
-        });
-    });
-    
-    // 添加一些示例提示
-    document.getElementById('playerName').placeholder = '例如：小明、张三、游戏大神';
-    document.getElementById('gameName').placeholder = '例如：王者荣耀、英雄联盟、原神';
-});
+// 分享原始生成器链接
+async function shareOriginalLink() {
+    try {
+        const shareData = {
+            title: '鸽子提醒器 - 天体距离计算器',
+            text: '用天体距离来幽默提醒迟到的朋友们！快来生成你的专属明信片吧！',
+            url: window.location.href
+        };
+        
+        if (navigator.share) {
+            // 使用原生分享API
+            await navigator.share(shareData);
+        } else {
+            // 降级方案：复制链接
+            await navigator.clipboard.writeText(window.location.href);
+            alert('生成器链接已复制到剪贴板！\n\n您可以将链接分享给朋友，他们可以生成自己的明信片。');
+        }
+    } catch (err) {
+        console.error('分享失败:', err);
+        // 最终降级方案
+        prompt('请复制下面的链接分享给朋友：', window.location.href);
+    }
+}
+

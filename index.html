@@ -102,92 +102,11 @@
             transform: translateY(-2px);
         }
 
-        .result-section {
-            background: #f8f9fa;
-            padding: 25px;
-            border-radius: 15px;
-            margin-top: 25px;
-            display: none;
-        }
-
-        .celestial-info {
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .celestial-info h3 {
-            font-size: 1.5em;
-            margin-bottom: 10px;
-        }
-
-        .letter-content {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            border: 2px solid #e1e5e9;
-            font-size: 16px;
-            line-height: 1.6;
-            white-space: pre-line;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .action-btn {
-            flex: 1;
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        .copy-btn {
-            background: #28a745;
-            color: white;
-        }
-
-        .copy-btn:hover {
-            background: #218838;
-        }
-
-        .share-btn {
-            background: #17a2b8;
-            color: white;
-        }
-
-        .share-btn:hover {
-            background: #138496;
-        }
-
         .footer {
             text-align: center;
             margin-top: 30px;
             color: #666;
             font-size: 14px;
-        }
-
-        .postcard-section {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            margin-top: 20px;
-            text-align: center;
-        }
-
-        .postcard-actions {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            flex-wrap: wrap;
         }
 
         @media (max-width: 600px) {
@@ -242,49 +161,8 @@
             </div>
 
             <button class="calculate-btn" onclick="calculateAndGenerate()">
-                🚀 计算天体位置并生成提醒信
+                🚀 生成天体提醒明信片
             </button>
-        </div>
-
-        <div class="result-section" id="resultSection">
-            <div class="celestial-info" id="celestialInfo">
-                <!-- 天体信息将在这里显示 -->
-            </div>
-            
-            <div class="letter-content" id="letterContent">
-                <!-- 生成的信件内容将在这里显示 -->
-            </div>
-
-            <div class="action-buttons">
-                <button class="action-btn copy-btn" onclick="copyLetter()">
-                    📋 复制信件
-                </button>
-                <button class="action-btn share-btn" onclick="generatePostcard()">
-                    🖼️ 生成明信片
-                </button>
-                <button class="action-btn" style="background: #6c757d; color: white;" onclick="resetApp()">
-                    🔄 重新生成
-                </button>
-            </div>
-            
-            <!-- 明信片预览区域 -->
-            <div class="postcard-section" id="postcardSection" style="display: none;">
-                <h3 style="margin-bottom: 15px; color: #333;">🎨 互动明信片</h3>
-                <div id="postcardContainer" style="border: 2px solid #ddd; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); overflow: hidden;">
-                    <!-- 明信片内容将在这里生成 -->
-                </div>
-                <div class="postcard-actions" style="margin-top: 15px; display: flex; gap: 10px;">
-                    <button class="action-btn" style="background: #28a745; color: white;" onclick="downloadPostcardHTML()">
-                        💾 下载明信片页面
-                    </button>
-                    <button class="action-btn" style="background: #17a2b8; color: white;" onclick="sharePostcardURL()">
-                        📤 分享明信片链接
-                    </button>
-                    <button class="action-btn" style="background: #6c757d; color: white;" onclick="resetApp()">
-                        🔄 重新生成
-                    </button>
-                </div>
-            </div>
         </div>
 
         <div class="footer">
