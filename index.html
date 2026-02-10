@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>鸽子提醒器 - 天体距离计算器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .input-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .time-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+        }
+
+        .calculate-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .calculate-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .result-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 25px;
+            display: none;
+        }
+
+        .celestial-info {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .celestial-info h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .letter-content {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #e1e5e9;
+            font-size: 16px;
+            line-height: 1.6;
+            white-space: pre-line;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .copy-btn {
+            background: #28a745;
+            color: white;
+        }
+
+        .copy-btn:hover {
+            background: #218838;
+        }
+
+        .share-btn {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .share-btn:hover {
+            background: #138496;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .postcard-section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .postcard-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🕊️ 鸽子提醒器</h1>
+            <p>用天体距离来幽默提醒迟到的朋友们</p>
+        </div>
+
+        <div class="input-section">
+            <div class="input-group">
+                <label for="playerName">朋友的名字：</label>
+                <input type="text" id="playerName" placeholder="输入你要提醒的朋友名字">
+            </div>
+
+            <div class="input-group">
+                <label for="gameName">游戏名称：</label>
+                <input type="text" id="gameName" placeholder="例如：王者荣耀、英雄联盟等">
+            </div>
+
+            <div class="input-group">
+                <label>等待时间：</label>
+                <div class="time-inputs">
+                    <div>
+                        <label for="hours">小时</label>
+                        <input type="number" id="hours" min="0" max="23" value="0">
+                    </div>
+                    <div>
+                        <label for="minutes">分钟</label>
+                        <input type="number" id="minutes" min="0" max="59" value="0">
+                    </div>
+                    <div>
+                        <label for="seconds">秒</label>
+                        <input type="number" id="seconds" min="0" max="59" value="0">
+                    </div>
+                </div>
+            </div>
+
+            <button class="calculate-btn" onclick="calculateAndGenerate()">
+                🚀 计算天体位置并生成提醒信
+            </button>
+        </div>
+
+        <div class="result-section" id="resultSection">
+            <div class="celestial-info" id="celestialInfo">
+                <!-- 天体信息将在这里显示 -->
+            </div>
+            
+            <div class="letter-content" id="letterContent">
+                <!-- 生成的信件内容将在这里显示 -->
+            </div>
+
+            <div class="action-buttons">
+                <button class="action-btn copy-btn" onclick="copyLetter()">
+                    📋 复制信件
+                </button>
+                <button class="action-btn share-btn" onclick="generatePostcard()">
+                    🖼️ 生成明信片
+                </button>
+                <button class="action-btn" style="background: #6c757d; color: white;" onclick="resetApp()">
+                    🔄 重新生成
+                </button>
+            </div>
+            
+            <!-- 明信片预览区域 -->
+            <div class="postcard-section" id="postcardSection" style="display: none;">
+                <h3 style="margin-bottom: 15px; color: #333;">🎨 互动明信片</h3>
+                <div id="postcardContainer" style="border: 2px solid #ddd; border-radius: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); overflow: hidden;">
+                    <!-- 明信片内容将在这里生成 -->
+                </div>
+                <div class="postcard-actions" style="margin-top: 15px; display: flex; gap: 10px;">
+                    <button class="action-btn" style="background: #28a745; color: white;" onclick="downloadPostcardHTML()">
+                        💾 下载明信片页面
+                    </button>
+                    <button class="action-btn" style="background: #17a2b8; color: white;" onclick="sharePostcardURL()">
+                        📤 分享明信片链接
+                    </button>
+                    <button class="action-btn" style="background: #6c757d; color: white;" onclick="resetApp()">
+                        🔄 重新生成
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>💡 基于光速计算的天体距离匹配系统</p>
+            <p>让等待变得更有趣！</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

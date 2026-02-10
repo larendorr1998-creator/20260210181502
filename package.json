@@ -1,0 +1,35 @@
+{
+  "name": "pigeon-reminder",
+  "version": "1.0.0",
+  "description": "一个有趣的工具，用来幽默地提醒那些约好参与游戏却迟迟不露面的"鸽子"朋友们",
+  "main": "index.html",
+  "scripts": {
+    "start": "开启本地服务器查看项目",
+    "dev": "开发模式",
+    "build": "构建项目"
+  },
+  "keywords": [
+    "游戏",
+    "提醒",
+    "幽默",
+    "天体",
+    "光速",
+    "明信片",
+    "JavaScript",
+    "HTML",
+    "CSS"
+  ],
+  "author": "LarenZhang",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/pigeon-reminder.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/pigeon-reminder/issues"
+  },
+  "homepage": "https://github.com/yourusername/pigeon-reminder#readme",
+  "engines": {
+    "node": ">=12.0.0"
+  }
+}
