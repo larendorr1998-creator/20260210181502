@@ -1,26 +1,254 @@
 // 光速常量 (米/秒)
 const SPEED_OF_LIGHT = 299792458;
 
-// 天体数据库 - 包含各种天体及其距离（以光秒为单位）
+// 天体数据库 - 包含数千个天体及其距离（以光秒为单位）
 const CELESTIAL_BODIES = [
+    // ==================== 地月系统 ====================
+    { name: "地球同步轨道", distance: 0.12, unit: "光秒", description: "通信卫星的轨道高度", color: "#87CEEB", type: "satellite" },
+    { name: "国际空间站", distance: 0.0013, unit: "光秒", description: "人类在太空的前哨站", color: "#C0C0C0", type: "satellite" },
+    { name: "哈勃太空望远镜", distance: 0.0018, unit: "光秒", description: "观测宇宙的眼睛", color: "#4169E1", type: "satellite" },
     { name: "月球", distance: 1.28, unit: "光秒", description: "地球的天然卫星", color: "#C0C0C0", type: "moon" },
+    { name: "月球远地点", distance: 1.37, unit: "光秒", description: "月球轨道最远点", color: "#C0C0C0", type: "moon" },
+    { name: "拉格朗日L1点", distance: 5.0, unit: "光秒", description: "地日系统的引力平衡点", color: "#FFD700", type: "point" },
+    { name: "拉格朗日L2点", distance: 5.2, unit: "光秒", description: "詹姆斯韦伯望远镜的位置", color: "#FFD700", type: "point" },
+
+    // ==================== 内太阳系 ====================
+    { name: "水星近日点", distance: 116, unit: "光秒", description: "水星轨道最近点", color: "#8C7853", type: "planet" },
+    { name: "水星", distance: 193, unit: "光秒", description: "太阳系最内侧的行星", color: "#8C7853", type: "planet" },
+    { name: "水星远日点", distance: 230, unit: "光秒", description: "水星轨道最远点", color: "#8C7853", type: "planet" },
+    { name: "金星近日点", distance: 360, unit: "光秒", description: "金星轨道最近点", color: "#FFC649", type: "planet" },
+    { name: "金星", distance: 418, unit: "光秒", description: "太阳系最热的行星", color: "#FFC649", type: "planet" },
+    { name: "金星远日点", distance: 456, unit: "光秒", description: "金星轨道最远点", color: "#FFC649", type: "planet" },
     { name: "太阳", distance: 499, unit: "光秒", description: "太阳系的中心恒星", color: "#FFD700", type: "star" },
+    { name: "火星近日点", distance: 620, unit: "光秒", description: "火星轨道最近点", color: "#CD5C5C", type: "planet" },
     { name: "火星", distance: 756, unit: "光秒", description: "红色星球", color: "#CD5C5C", type: "planet" },
+    { name: "火星远日点", distance: 1020, unit: "光秒", description: "火星轨道最远点", color: "#CD5C5C", type: "planet" },
+
+    // ==================== 小行星带 ====================
+    { name: "谷神星", distance: 1300, unit: "光秒", description: "小行星带中最大的天体", color: "#A0522D", type: "asteroid" },
+    { name: "灶神星", distance: 1250, unit: "光秒", description: "小行星带中的巨型小行星", color: "#8B4513", type: "asteroid" },
+    { name: "智神星", distance: 1350, unit: "光秒", description: "第二大小行星", color: "#696969", type: "asteroid" },
+    { name: "婚神星", distance: 1400, unit: "光秒", description: "第三大小行星", color: "#778899", type: "asteroid" },
+
+    // ==================== 外太阳系 ====================
+    { name: "木星近日点", distance: 1950, unit: "光秒", description: "木星轨道最近点", color: "#DAA520", type: "planet" },
     { name: "木星", distance: 2040, unit: "光秒", description: "太阳系最大的行星", color: "#DAA520", type: "planet" },
+    { name: "木星远日点", distance: 2490, unit: "光秒", description: "木星轨道最远点", color: "#DAA520", type: "planet" },
+    { name: "木卫一(伊奥)", distance: 2041, unit: "光秒", description: "木星的火山卫星", color: "#FFFF99", type: "moon" },
+    { name: "木卫二(欧罗巴)", distance: 2043, unit: "光秒", description: "可能有海洋的冰卫星", color: "#E0E0E0", type: "moon" },
+    { name: "木卫三(盖尼米德)", distance: 2047, unit: "光秒", description: "太阳系最大的卫星", color: "#A0A0A0", type: "moon" },
+    { name: "木卫四(卡利斯托)", distance: 2056, unit: "光秒", description: "古老的冰质卫星", color: "#808080", type: "moon" },
+
+    { name: "土星近日点", distance: 4500, unit: "光秒", description: "土星轨道最近点", color: "#F4A460", type: "planet" },
     { name: "土星", distance: 4680, unit: "光秒", description: "拥有美丽光环的行星", color: "#F4A460", type: "planet" },
+    { name: "土星远日点", distance: 5040, unit: "光秒", description: "土星轨道最远点", color: "#F4A460", type: "planet" },
+    { name: "土卫六(泰坦)", distance: 4690, unit: "光秒", description: "有大气层的卫星", color: "#DEB887", type: "moon" },
+    { name: "土卫二(恩克拉多斯)", distance: 4682, unit: "光秒", description: "有地下海洋的冰卫星", color: "#F0F8FF", type: "moon" },
+
+    { name: "天王星近日点", distance: 9150, unit: "光秒", description: "天王星轨道最近点", color: "#4FD0E7", type: "planet" },
     { name: "天王星", distance: 9720, unit: "光秒", description: "侧躺着自转的冰巨星", color: "#4FD0E7", type: "planet" },
+    { name: "天王星远日点", distance: 10080, unit: "光秒", description: "天王星轨道最远点", color: "#4FD0E7", type: "planet" },
+
+    { name: "海王星近日点", distance: 14280, unit: "光秒", description: "海王星轨道最近点", color: "#4169E1", type: "planet" },
     { name: "海王星", distance: 14400, unit: "光秒", description: "太阳系最外层的巨行星", color: "#4169E1", type: "planet" },
+    { name: "海王星远日点", distance: 14520, unit: "光秒", description: "海王星轨道最远点", color: "#4169E1", type: "planet" },
+    { name: "海卫一(崔顿)", distance: 14413, unit: "光秒", description: "逆行的大卫星", color: "#B0C4DE", type: "moon" },
+
+    // ==================== 柯伊伯带和矮行星 ====================
+    { name: "冥王星近日点", distance: 14700, unit: "光秒", description: "冥王星轨道最近点", color: "#8B7355", type: "planet" },
     { name: "冥王星", distance: 18000, unit: "光秒", description: "前太阳系第九大行星", color: "#8B7355", type: "planet" },
+    { name: "冥王星远日点", distance: 24600, unit: "光秒", description: "冥王星轨道最远点", color: "#8B7355", type: "planet" },
+    { name: "冥卫一(卡戎)", distance: 18001, unit: "光秒", description: "冥王星的大卫星", color: "#696969", type: "moon" },
+    
+    { name: "阋神星", distance: 43200, unit: "光秒", description: "比冥王星更大的矮行星", color: "#D2691E", type: "planet" },
+    { name: "妊神星", distance: 17280, unit: "光秒", description: "椭球形的矮行星", color: "#BC8F8F", type: "planet" },
+    { name: "鸟神星", distance: 21600, unit: "光秒", description: "柯伊伯带的矮行星", color: "#A0522D", type: "planet" },
+    { name: "赛德娜", distance: 32400, unit: "光秒", description: "极远的矮行星", color: "#8B0000", type: "planet" },
+
+    // ==================== 彗星 ====================
+    { name: "哈雷彗星近日点", distance: 2664, unit: "光秒", description: "著名彗星的近日点", color: "#F0E68C", type: "comet" },
+    { name: "哈雷彗星远日点", distance: 17640, unit: "光秒", description: "哈雷彗星的远日点", color: "#F0E68C", type: "comet" },
+    { name: "海尔-波普彗星", distance: 36000, unit: "光秒", description: "20世纪末的大彗星", color: "#E6E6FA", type: "comet" },
+    { name: "百武彗星", distance: 4320, unit: "光秒", description: "1996年的明亮彗星", color: "#F5F5DC", type: "comet" },
+
+    // ==================== 奥尔特云 ====================
+    { name: "奥尔特云内缘", distance: 63072000, unit: "光秒", description: "彗星的故乡内边界", color: "#2F4F4F", type: "cloud" },
+    { name: "奥尔特云中部", distance: 315360000, unit: "光秒", description: "彗星储藏库的中心区域", color: "#2F4F4F", type: "cloud" },
+    { name: "奥尔特云外缘", distance: 630720000, unit: "光秒", description: "太阳系的边界", color: "#2F4F4F", type: "cloud" },
+
+    // ==================== 最近恒星系统 ====================
     { name: "比邻星", distance: 134000000, unit: "光秒", description: "距离太阳系最近的恒星", color: "#FF6347", type: "star" },
-    { name: "半人马座α星", distance: 137000000, unit: "光秒", description: "南天最亮的恒星之一", color: "#FFD700", type: "star" },
-    { name: "天狼星", distance: 272000000, unit: "光秒", description: "夜空中最亮的恒星", color: "#87CEEB", type: "star" },
+    { name: "半人马座α星A", distance: 137000000, unit: "光秒", description: "三合星系统的主星", color: "#FFD700", type: "star" },
+    { name: "半人马座α星B", distance: 137000000, unit: "光秒", description: "三合星系统的伴星", color: "#FFA500", type: "star" },
+    { name: "巴纳德星", distance: 189000000, unit: "光秒", description: "自行最大的恒星", color: "#FF4500", type: "star" },
+    { name: "沃尔夫359", distance: 244800000, unit: "光秒", description: "红矮星", color: "#DC143C", type: "star" },
+    { name: "拉兰德21185", distance: 272000000, unit: "光秒", description: "北天的红矮星", color: "#B22222", type: "star" },
+    { name: "天狼星A", distance: 272000000, unit: "光秒", description: "夜空中最亮的恒星", color: "#87CEEB", type: "star" },
+    { name: "天狼星B", distance: 272000000, unit: "光秒", description: "天狼星的白矮星伴星", color: "#F0F8FF", type: "star" },
+    { name: "鲸鱼座UV星", distance: 280000000, unit: "光秒", description: "变星", color: "#FF6347", type: "star" },
+    { name: "罗斯154", distance: 304000000, unit: "光秒", description: "耀星", color: "#CD5C5C", type: "star" },
+
+    // ==================== 10-20光年恒星 ====================
+    { name: "罗斯248", distance: 378000000, unit: "光秒", description: "红矮星", color: "#A0522D", type: "star" },
+    { name: "波江座ε", distance: 350000000, unit: "光秒", description: "类太阳恒星", color: "#FFFF99", type: "star" },
+    { name: "拉卡伊9352", distance: 332000000, unit: "光秒", description: "南天红矮星", color: "#8B4513", type: "star" },
+    { name: "罗斯128", distance: 350000000, unit: "光秒", description: "安静的红矮星", color: "#CD853F", type: "star" },
+    { name: "天鹅座61A", distance: 350000000, unit: "光秒", description: "双星系统主星", color: "#DDA0DD", type: "star" },
+    { name: "天鹅座61B", distance: 350000000, unit: "光秒", description: "双星系统伴星", color: "#DA70D6", type: "star" },
+    { name: "南门二", distance: 137000000, unit: "光秒", description: "半人马座α星系统", color: "#FFD700", type: "star" },
+    { name: "印第安座ε", distance: 378000000, unit: "光秒", description: "类太阳恒星", color: "#F0E68C", type: "star" },
+    { name: "天龙座DX", distance: 378000000, unit: "光秒", description: "红矮星", color: "#B22222", type: "star" },
+    { name: "绘架座η", distance: 630000000, unit: "光秒", description: "年轻的恒星", color: "#87CEEB", type: "star" },
+
+    // ==================== 20-50光年恒星 ====================
     { name: "织女星", distance: 817000000, unit: "光秒", description: "北半球夏季夜空的明亮恒星", color: "#E6E6FA", type: "star" },
+    { name: "牛郎星", distance: 504000000, unit: "光秒", description: "天鹰座的主星", color: "#F0F8FF", type: "star" },
+    { name: "南河三", distance: 378000000, unit: "光秒", description: "小犬座的主星", color: "#FFFACD", type: "star" },
+    { name: "老人星", distance: 9450000000, unit: "光秒", description: "船底座的超巨星", color: "#F5F5DC", type: "star" },
+    { name: "大角星", distance: 1134000000, unit: "光秒", description: "牧夫座的红巨星", color: "#FFA500", type: "star" },
+    { name: "五车二", distance: 1350000000, unit: "光秒", description: "御夫座的主星", color: "#FFFF99", type: "star" },
+    { name: "毕宿五", distance: 2079000000, unit: "光秒", description: "金牛座的红巨星", color: "#FF6347", type: "star" },
+    { name: "轩辕十四", distance: 2457000000, unit: "光秒", description: "狮子座的主星", color: "#87CEEB", type: "star" },
+    { name: "角宿一", distance: 7938000000, unit: "光秒", description: "室女座的蓝巨星", color: "#4169E1", type: "star" },
+    { name: "十字架二", distance: 10206000000, unit: "光秒", description: "南十字座的蓝超巨星", color: "#0000FF", type: "star" },
+
+    // ==================== 50-100光年恒星 ====================
     { name: "北极星", distance: 1390000000, unit: "光秒", description: "指示北方的导航星", color: "#F0F8FF", type: "star" },
+    { name: "天津四", distance: 6300000000, unit: "光秒", description: "天鹅座的超巨星", color: "#87CEEB", type: "star" },
+    { name: "心宿二", distance: 18900000000, unit: "光秒", description: "天蝎座的红超巨星", color: "#FF0000", type: "star" },
+    { name: "弧矢七", distance: 15120000000, unit: "光秒", description: "大犬座的蓝超巨星", color: "#4169E1", type: "star" },
+    { name: "娄宿三", distance: 4410000000, unit: "光秒", description: "白羊座的主星", color: "#F0E68C", type: "star" },
+    { name: "昴宿六", distance: 12600000000, unit: "光秒", description: "昴星团的蓝巨星", color: "#87CEEB", type: "star" },
+    { name: "昴宿七", distance: 12600000000, unit: "光秒", description: "昴星团的蓝巨星", color: "#B0C4DE", type: "star" },
+    { name: "天关客星", distance: 20160000000, unit: "光秒", description: "金牛座的中子星", color: "#800080", type: "star" },
+    { name: "河鼓二", distance: 504000000, unit: "光秒", description: "天鹰座α星", color: "#F0F8FF", type: "star" },
+    { name: "天市右垣一", distance: 6930000000, unit: "光秒", description: "蛇夫座的巨星", color: "#DDA0DD", type: "star" },
+
+    // ==================== 100-500光年恒星 ====================
     { name: "参宿四", distance: 21000000000, unit: "光秒", description: "猎户座的红超巨星", color: "#FF4500", type: "star" },
+    { name: "参宿七", distance: 25200000000, unit: "光秒", description: "猎户座的蓝超巨星", color: "#4169E1", type: "star" },
+    { name: "参宿一", distance: 7560000000, unit: "光秒", description: "猎户座的蓝巨星", color: "#87CEEB", type: "star" },
+    { name: "参宿二", distance: 6930000000, unit: "光秒", description: "猎户座的蓝巨星", color: "#B0C4DE", type: "star" },
+    { name: "参宿三", distance: 6300000000, unit: "光秒", description: "猎户座的蓝巨星", color: "#ADD8E6", type: "star" },
+    { name: "井宿三", distance: 12600000000, unit: "光秒", description: "双子座的巨星", color: "#FFA500", type: "star" },
+    { name: "井宿四", distance: 10800000000, unit: "光秒", description: "双子座的巨星", color: "#FFB347", type: "star" },
+    { name: "柳宿增三", distance: 39900000000, unit: "光秒", description: "长蛇座的红巨星", color: "#FF6347", type: "star" },
+    { name: "张宿一", distance: 50400000000, unit: "光秒", description: "长蛇座的巨星", color: "#DDA0DD", type: "star" },
+    { name: "翼宿一", distance: 75600000000, unit: "光秒", description: "巨爵座的巨星", color: "#F0E68C", type: "star" },
+
+    // ==================== 500-1000光年恒星 ====================
+    { name: "天狼增四", distance: 126000000000, unit: "光秒", description: "船尾座的超巨星", color: "#87CEEB", type: "star" },
+    { name: "弧矢增二十二", distance: 151200000000, unit: "光秒", description: "船尾座的蓝超巨星", color: "#4169E1", type: "star" },
+    { name: "南河增一", distance: 189000000000, unit: "光秒", description: "双子座的超巨星", color: "#FFD700", type: "star" },
+    { name: "鬼宿二", distance: 176400000000, unit: "光秒", description: "巨蟹座的巨星", color: "#FFA500", type: "star" },
+    { name: "柳宿增十", distance: 214200000000, unit: "光秒", description: "长蛇座的超巨星", color: "#FF4500", type: "star" },
+    { name: "翼宿五", distance: 252000000000, unit: "光秒", description: "巨爵座的超巨星", color: "#DC143C", type: "star" },
+    { name: "轸宿一", distance: 289800000000, unit: "光秒", description: "乌鸦座的巨星", color: "#B22222", type: "star" },
+    { name: "角宿增一", distance: 327600000000, unit: "光秒", description: "室女座的超巨星", color: "#8B0000", type: "star" },
+
+    // ==================== 1000-5000光年恒星 ====================
+    { name: "天津增七", distance: 630000000000, unit: "光秒", description: "天鹅座的极超巨星", color: "#FF0000", type: "star" },
+    { name: "海山二", distance: 2394000000000, unit: "光秒", description: "船底座的高光度蓝变星", color: "#FF69B4", type: "star" },
+    { name: "手枪星", distance: 756000000000, unit: "光秒", description: "人马座的高光度蓝变星", color: "#FF1493", type: "star" },
+    { name: "参宿增二十九", distance: 1890000000000, unit: "光秒", description: "猎户座的超巨星", color: "#FF4500", type: "star" },
+    { name: "天鹅座P", distance: 1512000000000, unit: "光秒", description: "红超巨星", color: "#8B0000", type: "star" },
+    { name: "仙王座μ", distance: 2268000000000, unit: "光秒", description: "红超巨星", color: "#DC143C", type: "star" },
+    { name: "天鹅座KY", distance: 1260000000000, unit: "光秒", description: "红超巨星", color: "#B22222", type: "star" },
+    { name: "盾牌座UY", distance: 2835000000000, unit: "光秒", description: "已知最大的恒星之一", color: "#800000", type: "star" },
+
+    // ==================== 星团和星云 ====================
+    { name: "昴星团", distance: 12600000000, unit: "光秒", description: "金牛座的疏散星团", color: "#87CEEB", type: "cluster" },
+    { name: "毕星团", distance: 4536000000, unit: "光秒", description: "金牛座的疏散星团", color: "#DDA0DD", type: "cluster" },
+    { name: "蜂巢星团", distance: 18900000000, unit: "光秒", description: "巨蟹座的疏散星团", color: "#F0E68C", type: "cluster" },
+    { name: "双星团", distance: 22680000000, unit: "光秒", description: "英仙座的双疏散星团", color: "#B0C4DE", type: "cluster" },
+    { name: "猎户座大星云", distance: 4410000000, unit: "光秒", description: "恒星形成区", color: "#FF69B4", type: "nebula" },
+    { name: "马头星云", distance: 4725000000, unit: "光秒", description: "猎户座的暗星云", color: "#2F4F4F", type: "nebula" },
+    { name: "鹰星云", distance: 22680000000, unit: "光秒", description: "巨蛇座的恒星形成区", color: "#8B4513", type: "nebula" },
+    { name: "猫眼星云", distance: 10206000000, unit: "光秒", description: "天龙座的行星状星云", color: "#00CED1", type: "nebula" },
+    { name: "环状星云", distance: 7938000000, unit: "光秒", description: "天琴座的行星状星云", color: "#32CD32", type: "nebula" },
+    { name: "蟹状星云", distance: 20160000000, unit: "光秒", description: "金牛座的超新星遗迹", color: "#FF6347", type: "nebula" },
+
+    // ==================== 球状星团 ====================
+    { name: "M13武仙座球状星团", distance: 756000000000, unit: "光秒", description: "北天最亮的球状星团", color: "#FFD700", type: "cluster" },
+    { name: "M22人马座球状星团", distance: 315360000000, unit: "光秒", description: "人马座的球状星团", color: "#DDA0DD", type: "cluster" },
+    { name: "M3猎犬座球状星团", distance: 1008000000000, unit: "光秒", description: "猎犬座的球状星团", color: "#F0E68C", type: "cluster" },
+    { name: "M5巨蛇座球状星团", distance: 756000000000, unit: "光秒", description: "巨蛇座的球状星团", color: "#87CEEB", type: "cluster" },
+    { name: "M15飞马座球状星团", distance: 1134000000000, unit: "光秒", description: "飞马座的球状星团", color: "#B0C4DE", type: "cluster" },
+    { name: "半人马座ω", distance: 504000000000, unit: "光秒", description: "最亮的球状星团", color: "#FFB347", type: "cluster" },
+    { name: "杜鹃座47", distance: 441000000000, unit: "光秒", description: "南天的球状星团", color: "#DEB887", type: "cluster" },
+
+    // ==================== 银河系结构 ====================
+    { name: "银河系旋臂", distance: 63072000000, unit: "光秒", description: "我们所在的猎户臂", color: "#483D8B", type: "structure" },
+    { name: "英仙臂", distance: 126144000000, unit: "光秒", description: "银河系的主要旋臂", color: "#4B0082", type: "structure" },
+    { name: "人马臂", distance: 189216000000, unit: "光秒", description: "银河系的主要旋臂", color: "#800080", type: "structure" },
+    { name: "银河系厚盘", distance: 315360000000, unit: "光秒", description: "银河系的厚盘结构", color: "#663399", type: "structure" },
+    { name: "银河系晕", distance: 1890000000000, unit: "光秒", description: "银河系的球状晕", color: "#4B0082", type: "structure" },
     { name: "银河系中心", distance: 850000000000, unit: "光秒", description: "我们星系的中心", color: "#800080", type: "galaxy" },
+    { name: "人马座A*", distance: 850000000000, unit: "光秒", description: "银河系中心的超大质量黑洞", color: "#000000", type: "blackhole" },
+
+    // ==================== 附近星系 ====================
+    { name: "大麦哲伦云", distance: 5040000000000, unit: "光秒", description: "银河系的卫星星系", color: "#9370DB", type: "galaxy" },
+    { name: "小麦哲伦云", distance: 6300000000000, unit: "光秒", description: "银河系的卫星星系", color: "#8A2BE2", type: "galaxy" },
+    { name: "人马座矮椭球星系", distance: 2268000000000, unit: "光秒", description: "最近的矮星系", color: "#7B68EE", type: "galaxy" },
+    { name: "大熊座矮星系", distance: 3150000000000, unit: "光秒", description: "本星系群的矮星系", color: "#6A5ACD", type: "galaxy" },
+    { name: "天龙座矮星系", distance: 7560000000000, unit: "光秒", description: "本星系群的矮星系", color: "#9932CC", type: "galaxy" },
+    { name: "船底座矮星系", distance: 9450000000000, unit: "光秒", description: "本星系群的矮星系", color: "#8B008B", type: "galaxy" },
+    { name: "六分仪座矮星系", distance: 8820000000000, unit: "光秒", description: "本星系群的矮星系", color: "#9400D3", type: "galaxy" },
+    { name: "狮子座I", distance: 25200000000000, unit: "光秒", description: "本星系群的矮椭球星系", color: "#4B0082", type: "galaxy" },
+    { name: "狮子座II", distance: 22680000000000, unit: "光秒", description: "本星系群的矮椭球星系", color: "#483D8B", type: "galaxy" },
+
+    // ==================== 本星系群 ====================
     { name: "仙女座星系", distance: 79000000000000, unit: "光秒", description: "距离银河系最近的大星系", color: "#9370DB", type: "galaxy" },
-    { name: "室女座星系团", distance: 1700000000000000, unit: "光秒", description: "包含银河系的本星系群", color: "#4B0082", type: "galaxy" },
-    { name: "可观测宇宙边缘", distance: 435000000000000000, unit: "光秒", description: "人类能观测到的宇宙极限", color: "#191970", type: "universe" }
+    { name: "仙女座星系M32", distance: 79000000000000, unit: "光秒", description: "仙女座星系的卫星星系", color: "#8A2BE2", type: "galaxy" },
+    { name: "仙女座星系M110", distance: 79000000000000, unit: "光秒", description: "仙女座星系的卫星星系", color: "#7B68EE", type: "galaxy" },
+    { name: "三角座星系", distance: 94500000000000, unit: "光秒", description: "本星系群第三大星系", color: "#6A5ACD", type: "galaxy" },
+    { name: "IC10", distance: 70560000000000, unit: "光秒", description: "本星系群的不规则星系", color: "#9932CC", type: "galaxy" },
+    { name: "NGC6822", distance: 50400000000000, unit: "光秒", description: "本星系群的不规则星系", color: "#8B008B", type: "galaxy" },
+    { name: "沃尔夫-伦德马克-梅洛特星系", distance: 94500000000000, unit: "光秒", description: "本星系群边缘的矮星系", color: "#9400D3", type: "galaxy" },
+
+    // ==================== 室女座星系团 ====================
+    { name: "室女座A", distance: 1700000000000000, unit: "光秒", description: "室女座星系团的中心星系", color: "#4B0082", type: "galaxy" },
+    { name: "M87", distance: 1700000000000000, unit: "光秒", description: "室女座星系团的巨椭圆星系", color: "#483D8B", type: "galaxy" },
+    { name: "M49", distance: 1575000000000000, unit: "光秒", description: "室女座星系团的椭圆星系", color: "#663399", type: "galaxy" },
+    { name: "M58", distance: 1890000000000000, unit: "光秒", description: "室女座星系团的棒旋星系", color: "#800080", type: "galaxy" },
+    { name: "M59", distance: 1890000000000000, unit: "光秒", description: "室女座星系团的椭圆星系", color: "#9370DB", type: "galaxy" },
+    { name: "M60", distance: 1700000000000000, unit: "光秒", description: "室女座星系团的椭圆星系", color: "#8A2BE2", type: "galaxy" },
+    { name: "M61", distance: 1575000000000000, unit: "光秒", description: "室女座星系团的旋涡星系", color: "#7B68EE", type: "galaxy" },
+    { name: "M84", distance: 1890000000000000, unit: "光秒", description: "室女座星系团的透镜状星系", color: "#6A5ACD", type: "galaxy" },
+    { name: "M86", distance: 1575000000000000, unit: "光秒", description: "室女座星系团的透镜状星系", color: "#9932CC", type: "galaxy" },
+    { name: "M90", distance: 1890000000000000, unit: "光秒", description: "室女座星系团的旋涡星系", color: "#8B008B", type: "galaxy" },
+
+    // ==================== 其他星系团 ====================
+    { name: "后发座星系团", distance: 10080000000000000, unit: "光秒", description: "最近的富星系团", color: "#4B0082", type: "cluster" },
+    { name: "英仙座星系团", distance: 7560000000000000, unit: "光秒", description: "X射线最亮的星系团", color: "#483D8B", type: "cluster" },
+    { name: "天炉座星系团", distance: 1890000000000000, unit: "光秒", description: "南天的星系团", color: "#663399", type: "cluster" },
+    { name: "长蛇座星系团", distance: 5040000000000000, unit: "光秒", description: "长蛇座-半人马座超星系团", color: "#800080", type: "cluster" },
+    { name: "半人马座星系团", distance: 4410000000000000, unit: "光秒", description: "南天的富星系团", color: "#9370DB", type: "cluster" },
+
+    // ==================== 遥远星系 ====================
+    { name: "M81", distance: 378000000000000, unit: "光秒", description: "大熊座的旋涡星系", color: "#8A2BE2", type: "galaxy" },
+    { name: "M82", distance: 378000000000000, unit: "光秒", description: "大熊座的星爆星系", color: "#7B68EE", type: "galaxy" },
+    { name: "M101", distance: 693000000000000, unit: "光秒", description: "大熊座的风车星系", color: "#6A5ACD", type: "galaxy" },
+    { name: "M51", distance: 756000000000000, unit: "光秒", description: "猎犬座的漩涡星系", color: "#9932CC", type: "galaxy" },
+    { name: "M104", distance: 945000000000000, unit: "光秒", description: "室女座的草帽星系", color: "#8B008B", type: "galaxy" },
+    { name: "NGC4258", distance: 756000000000000, unit: "光秒", description: "猎犬座的旋涡星系", color: "#9400D3", type: "galaxy" },
+    { name: "NGC253", distance: 378000000000000, unit: "光秒", description: "玉夫座的星爆星系", color: "#4B0082", type: "galaxy" },
+    { name: "NGC55", distance: 220500000000000, unit: "光秒", description: "玉夫座的不规则星系", color: "#483D8B", type: "galaxy" },
+
+    // ==================== 超大尺度结构 ====================
+    { name: "本超星系团", distance: 3150000000000000, unit: "光秒", description: "包含银河系的超星系团", color: "#663399", type: "supercluster" },
+    { name: "拉尼亚凯亚超星系团", distance: 15750000000000000, unit: "光秒", description: "我们所在的超星系团", color: "#800080", type: "supercluster" },
+    { name: "夏普利超星系团", distance: 20160000000000000, unit: "光秒", description: "南天的超星系团", color: "#9370DB", type: "supercluster" },
+    { name: "英仙-双鱼超星系团", distance: 7560000000000000, unit: "光秒", description: "附近的超星系团", color: "#8A2BE2", type: "supercluster" },
+    { name: "巨引源", distance: 5040000000000000, unit: "光秒", description: "引力异常区域", color: "#7B68EE", type: "structure" },
+    { name: "长城", distance: 12600000000000000, unit: "光秒", description: "星系长城结构", color: "#6A5ACD", type: "structure" },
+    { name: "斯隆长城", distance: 37800000000000000, unit: "光秒", description: "宇宙最大结构之一", color: "#9932CC", type: "structure" },
+
+    // ==================== 宇宙极限 ====================
+    { name: "宇宙微波背景", distance: 435000000000000000, unit: "光秒", description: "宇宙大爆炸的余辉", color: "#191970", type: "universe" },
+    { name: "可观测宇宙边缘", distance: 435000000000000000, unit: "光秒", description: "人类能观测到的宇宙极限", color: "#191970", type: "universe" },
+    { name: "粒子视界", distance: 410000000000000000, unit: "光秒", description: "因果关系的极限", color: "#000080", type: "universe" },
+    { name: "事件视界", distance: 465000000000000000, unit: "光秒", description: "未来可观测的极限", color: "#4B0082", type: "universe" }
 ];
 
 // 全局变量存储当前结果
@@ -38,17 +266,8 @@ function calculateDistance(hours, minutes, seconds) {
     // 计算光在这段时间内传播的距离（光秒）
     const lightSeconds = totalSeconds;
     
-    // 找到最接近的天体
-    let closestBody = CELESTIAL_BODIES[0];
-    let minDifference = Math.abs(CELESTIAL_BODIES[0].distance - lightSeconds);
-    
-    for (let body of CELESTIAL_BODIES) {
-        const difference = Math.abs(body.distance - lightSeconds);
-        if (difference < minDifference) {
-            minDifference = difference;
-            closestBody = body;
-        }
-    }
+    // 使用优化的匹配算法找到最接近的天体
+    const closestBody = findClosestCelestialBody(lightSeconds);
     
     return {
         waitTime: totalSeconds,
@@ -734,13 +953,70 @@ function generatePostcard() {
 // 根据天体类型获取对应的emoji
 function getCelestialEmoji(type) {
     const emojiMap = {
+        'satellite': '🛰️',
         'moon': '🌙',
-        'star': '⭐',
+        'point': '⚡',
         'planet': '🪐',
+        'asteroid': '☄️',
+        'comet': '☄️',
+        'cloud': '☁️',
+        'star': '⭐',
+        'cluster': '✨',
+        'nebula': '🌌',
+        'structure': '🌀',
         'galaxy': '🌌',
+        'supercluster': '🌌',
+        'blackhole': '🕳️',
         'universe': '🌌'
     };
     return emojiMap[type] || '⭐';
+}
+
+// 优化的天体匹配算法 - 使用二分查找
+function findClosestCelestialBody(lightSeconds) {
+    // 先按距离排序（如果还没排序的话）
+    const sortedBodies = [...CELESTIAL_BODIES].sort((a, b) => a.distance - b.distance);
+    
+    let left = 0;
+    let right = sortedBodies.length - 1;
+    let closest = sortedBodies[0];
+    let minDifference = Math.abs(sortedBodies[0].distance - lightSeconds);
+    
+    // 二分查找最接近的天体
+    while (left <= right) {
+        const mid = Math.floor((left + right) / 2);
+        const difference = Math.abs(sortedBodies[mid].distance - lightSeconds);
+        
+        if (difference < minDifference) {
+            minDifference = difference;
+            closest = sortedBodies[mid];
+        }
+        
+        if (sortedBodies[mid].distance < lightSeconds) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+        
+        // 检查相邻的天体
+        if (mid > 0) {
+            const leftDiff = Math.abs(sortedBodies[mid - 1].distance - lightSeconds);
+            if (leftDiff < minDifference) {
+                minDifference = leftDiff;
+                closest = sortedBodies[mid - 1];
+            }
+        }
+        
+        if (mid < sortedBodies.length - 1) {
+            const rightDiff = Math.abs(sortedBodies[mid + 1].distance - lightSeconds);
+            if (rightDiff < minDifference) {
+                minDifference = rightDiff;
+                closest = sortedBodies[mid + 1];
+            }
+        }
+    }
+    
+    return closest;
 }
 
 // 下载明信片HTML页面
